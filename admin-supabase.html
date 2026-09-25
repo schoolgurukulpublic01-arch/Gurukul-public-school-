@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gurukul Public School — Admin Panel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0b1e33;
+  --navy-2:#0a1a2b;
+  --gold:#f5b82e;
+  --gold-light:#ffc948;
+  --bg:#f5f9ff;
+  --card:#ffffff;
+  --border:#e2ebf6;
+  --text:#0b1e33;
+  --muted:#5d7ea3;
+  --success:#24b364;
+  --danger:#e04545;
+  --radius:18px;
+  --shadow:0 8px 24px -12px rgba(11,30,51,.12);
+}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#eaf1fa}
+::-webkit-scrollbar-thumb{background:#b8cef0;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:#8aa9d1}
+
+/* ============ SIDEBAR ============ */
+.sidebar{
+  width:270px;
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);
+  color:#eef4ff;
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;bottom:0;left:0;
+  z-index:100;
+  box-shadow:4px 0 24px rgba(0,0,0,.08);
+  transition:width .3s ease;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+.sidebar-header{
+  padding:24px 22px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;
+}
+.school-logo-icon{
+  width:44px;height:44px;min-width:44px;
+  background:var(--gold);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:var(--navy);
+  box-shadow:0 8px 16px -6px rgba(245,184,46,.4);
+}
+.school-logo-text{
+  font-family:'Poppins',sans-serif;
+  font-weight:700;font-size:1.08rem;
+  line-height:1.25;letter-spacing:-.3px;
+  white-space:nowrap;transition:opacity .2s;
+}
+.school-logo-text small{
+  display:block;font-size:.68rem;font-weight:400;
+  color:#9bb7dd;letter-spacing:.4px;
+}
+.nav-menu{padding:16px 12px;flex:1;display:flex;flex-direction:column;gap:3px}
+.nav-item{
+  display:flex;align-items:center;gap:13px;
+  padding:11px 16px;border-radius:12px;
+  color:#b8cef0;font-weight:500;font-size:.9rem;
+  cursor:pointer;transition:all .18s ease;
+  border:none;background:transparent;width:100%;
+  text-align:left;font-family:inherit;
+  position:relative;
+}
+.nav-item i{width:22px;font-size:1.05rem;color:#7f9bcb;transition:color .18s;text-align:center;flex-shrink:0}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item:hover i{color:var(--gold)}
+.nav-item.active{
+  background:rgba(245,184,46,.14);
+  color:#fff;
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:8px;bottom:8px;
+  width:4px;background:var(--gold);border-radius:0 4px 4px 0;
+}
+.nav-item.active i{color:var(--gold)}
+.nav-divider{
+  margin:14px 20px 6px;
+  font-size:.62rem;text-transform:uppercase;letter-spacing:1px;
+  color:#5577a3;font-weight:600;
+}
+.sidebar-footer{
+  padding:16px 18px;border-top:1px solid rgba(255,255,255,.08);
+  font-size:.7rem;color:#5577a3;text-align:center;
+  flex-shrink:0;
+}
+
+/* ============ MAIN ============ */
+.main{
+  margin-left:270px;
+  flex:1;
+  padding:22px 30px 40px;
+  width:calc(100% - 270px);
+  min-height:100vh;
+  transition:margin-left .3s ease,width .3s ease;
+}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;flex-wrap:wrap;gap:14px;
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(8px);
+  padding:12px 20px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  position:sticky;top:12px;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.menu-toggle{
+  display:none;
+  background:none;border:none;font-size:1.3rem;
+  color:var(--navy);cursor:pointer;padding:6px;
+}
+.page-title h1{
+  font-family:'Poppins',sans-serif;
+  font-weight:600;font-size:1.5rem;
+  letter-spacing:-.4px;
+}
+.page-title p{color:var(--muted);font-size:.82rem;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.search-mini{
+  display:flex;align-items:center;gap:8px;
+  background:white;padding:8px 14px;border-radius:40px;
+  border:1px solid var(--border);font-size:.82rem;
+  color:var(--muted);min-width:200px;
+}
+.search-mini input{
+  border:none;outline:none;font-family:inherit;
+  font-size:.82rem;width:100%;background:transparent;color:var(--text);
+}
+.admin-badge{
+  background:white;padding:6px 14px 6px 6px;
+  border-radius:40px;display:flex;align-items:center;gap:10px;
+  border:1px solid var(--border);cursor:pointer;
+  transition:.2s;
+}
+.admin-badge:hover{border-color:#c5d8ed}
+.admin-avatar{
+  width:34px;height:34px;background:var(--navy);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:white;font-weight:600;font-size:.82rem;
+}
+.admin-badge .name{font-weight:600;font-size:.85rem}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:30px;
+  font-weight:600;font-size:.85rem;
+  border:none;cursor:pointer;
+  font-family:inherit;transition:.2s;
+  white-space:nowrap;
+}
+.btn-gold{
+  background:var(--gold);color:var(--navy);
+  box-shadow:0 6px 14px -6px rgba(245,184,46,.5);
+}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:0 10px 18px -6px rgba(245,184,46,.55)}
+.btn-soft{background:#e8f1fc;color:var(--navy)}
+.btn-soft:hover{background:#dae8f9}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{background:white;color:var(--navy)}
+.btn-danger{background:#fde8e8;color:var(--danger)}
+.btn-danger:hover{background:#fbdada}
+.btn-sm{padding:7px 14px;font-size:.78rem}
+.btn-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;transition:.2s;
+  background:transparent;color:#8aa3c0;font-size:.9rem;
+}
+.btn-icon:hover{background:#eef4fc;color:var(--navy)}
+.btn-icon.danger:hover{background:#fde8e8;color:var(--danger)}
+.btn-icon.success:hover{background:#e2f5e9;color:var(--success)}
+
+/* ============ PAGES ============ */
+.page{display:none;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ CARDS ============ */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:16px;margin-bottom:28px;
+}
+.stat-card{
+  background:var(--card);padding:20px;border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;
+  transition:.25s;cursor:pointer;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 18px 30px -14px rgba(11,30,51,.15);border-color:#d6e5f5}
+.stat-icon{
+  width:50px;height:50px;min-width:50px;
+  background:#f0f6ff;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--navy);font-size:1.35rem;
+}
+.stat-info h3{font-size:1.7rem;font-family:'Poppins',sans-serif;font-weight:700;line-height:1.1}
+.stat-info p{font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;color:var(--muted);margin-top:3px}
+
+.section-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin:28px 0 14px;flex-wrap:wrap;gap:12px;
+}
+.section-head h2{
+  font-family:'Poppins',sans-serif;font-weight:600;font-size:1.2rem;
+  display:flex;align-items:center;gap:10px;
+}
+.section-head h2 .icon-badge{
+  width:32px;height:32px;background:var(--navy);color:var(--gold);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;
+}
+.card-panel{
+  background:var(--card);border-radius:var(--radius);
+  border:1px solid var(--border);box-shadow:var(--shadow);
+  overflow:hidden;margin-bottom:20px;
+}
+.card-panel-body{padding:20px}
+
+/* ============ TABLE ============ */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{
+  text-align:left;padding:13px 16px;
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--muted);font-weight:700;
+  border-bottom:1px solid var(--border);
+  background:#fafdff;white-space:nowrap;
+}
+td{
+  padding:14px 16px;font-size:.88rem;
+  border-bottom:1px solid #edf3fa;color:#173856;
+  font-weight:500;vertical-align:middle;
+}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#fafdff}
+.actions{text-align:right;white-space:nowrap}
+
+.badge{
+  padding:4px 11px;border-radius:40px;
+  font-size:.7rem;font-weight:700;
+  display:inline-flex;align-items:center;gap:6px;
+  white-space:nowrap;
+}
+.badge.green{background:#e2f5e9;color:#1a6e3b}
+.badge.gold{background:#fff3d6;color:#7a5800}
+.badge.blue{background:#e3f0ff;color:#1c3a5e}
+.badge.gray{background:#eef2f7;color:#5d7ea3}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success)}
+.dot.draft{background:#b0c5db}
+
+/* ============ GRID CARDS ============ */
+.grid-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:16px;
+}
+.info-card{
+  background:white;border-radius:var(--radius);
+  border:1px solid var(--border);box-shadow:var(--shadow);
+  padding:18px;transition:.2s;position:relative;
+  overflow:hidden;
+}
+.info-card:hover{transform:translateY(-3px);box-shadow:0 18px 30px -14px rgba(11,30,51,.15)}
+.info-card .card-top{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.avatar{
+  width:52px;height:52px;min-width:52px;border-radius:50%;
+  background:linear-gradient(135deg,#ccdff5,#a8c5e8);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--navy);font-size:1.1rem;
+}
+.avatar.gold{background:linear-gradient(135deg,#ffe3a3,#f5b82e);color:var(--navy)}
+.info-card h4{font-size:1rem;font-weight:700}
+.info-card .sub{font-size:.78rem;color:var(--muted);font-weight:500;margin-top:2px}
+.info-card .desc{font-size:.82rem;color:#4e6e8f;line-height:1.5;margin:8px 0 12px}
+.info-card .card-actions{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:20px;
+  font-size:.68rem;font-weight:600;
+  background:#f0f6ff;color:#3c608c;
+}
+.chip i{font-size:.72rem}
+
+/* ============ FORM ============ */
+.form-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-group.full{grid-column:1/-1}
+label{
+  font-size:.78rem;font-weight:600;color:#3c608c;
+  display:flex;align-items:center;gap:5px;
+}
+label .req{color:var(--danger)}
+input[type=text],input[type=email],input[type=tel],input[type=number],
+input[type=date],input[type=time],input[type=file],select,textarea{
+  width:100%;padding:11px 14px;border-radius:12px;
+  border:1.5px solid var(--border);background:#fafdff;
+  font-family:inherit;font-size:.88rem;color:var(--text);
+  transition:.18s;outline:none;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--gold);background:white;
+  box-shadow:0 0 0 4px rgba(245,184,46,.12);
+}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+.hint{font-size:.7rem;color:#8aa3c0;margin-top:2px}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ============ MODAL ============ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(11,30,51,.55);
+  backdrop-filter:blur(3px);z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{
+  background:white;border-radius:24px;
+  width:100%;max-width:640px;max-height:90vh;
+  overflow-y:auto;box-shadow:0 30px 60px -20px rgba(11,30,51,.5);
+  transform:scale(.95) translateY(10px);
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.show .modal{transform:scale(1) translateY(0)}
+.modal-header{
+  padding:22px 26px 16px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;
+  position:sticky;top:0;background:white;z-index:2;
+  border-radius:24px 24px 0 0;
+}
+.modal-header h3{font-family:'Poppins',sans-serif;font-size:1.15rem;font-weight:600}
+.modal-header p{font-size:.78rem;color:var(--muted);margin-top:3px}
+.modal-close{
+  background:#f0f6ff;border:none;width:34px;height:34px;
+  border-radius:10px;cursor:pointer;color:var(--navy);
+  font-size:1rem;transition:.2s;flex-shrink:0;
+}
+.modal-close:hover{background:#e0ecfa}
+.modal-body{padding:22px 26px}
+.modal-footer{
+  padding:16px 26px 22px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:10px;
+  position:sticky;bottom:0;background:white;
+  border-radius:0 0 24px 24px;
+}
+
+/* ============ TOAST ============ */
+.toast-container{
+  position:fixed;top:22px;right:22px;z-index:9999;
+  display:flex;flex-direction:column;gap:10px;
+}
+.toast{
+  background:white;border-radius:14px;padding:14px 18px;
+  box-shadow:0 18px 36px -12px rgba(11,30,51,.25);
+  display:flex;align-items:center;gap:12px;
+  font-size:.85rem;font-weight:600;color:var(--navy);
+  border-left:4px solid var(--success);
+  min-width:260px;animation:slideIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.error{border-left-color:var(--danger)}
+.toast.info{border-left-color:#3c8dd6}
+.toast i{font-size:1.1rem}
+.toast.success i{color:var(--success)}
+.toast.error i{color:var(--danger)}
+.toast.info i{color:#3c8dd6}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.hide{animation:slideOut .25s forwards}
+@keyframes slideOut{to{transform:translateX(120%);opacity:0}}
+
+/* ============ EMPTY ============ */
+.empty{
+  text-align:center;padding:40px 20px;color:var(--muted);
+}
+.empty i{font-size:2.6rem;color:#c5d8ed;margin-bottom:14px;display:block}
+.empty h4{font-size:1rem;color:#3c608c;margin-bottom:6px}
+.empty p{font-size:.82rem}
+
+/* ============ STAT SUMMARY ============ */
+.quick-bar{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  background:linear-gradient(90deg,#f0f6ff,#fafdff);
+  padding:14px 20px;border-radius:16px;
+  border:1px solid var(--border);margin-bottom:22px;
+  font-size:.84rem;
+}
+.quick-bar .item{display:flex;align-items:center;gap:8px;color:#3c608c;font-weight:600}
+.quick-bar .item b{color:var(--navy);font-weight:700}
+.quick-bar .sep{color:#c5d8ed}
+
+/* ============ GALLERY ============ */
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:12px;
+}
+.gallery-item{
+  aspect-ratio:1;border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,#dbe9f7,#c5d8ed);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;color:#8aa3c0;position:relative;
+  border:1px solid var(--border);transition:.2s;
+}
+.gallery-item:hover{transform:scale(1.02);box-shadow:0 12px 24px -10px rgba(11,30,51,.2)}
+.gallery-item .overlay{
+  position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(11,30,51,.75));
+  display:flex;align-items:flex-end;padding:10px;opacity:0;transition:.2s;
+}
+.gallery-item:hover .overlay{opacity:1}
+.gallery-item .overlay .title{color:white;font-size:.75rem;font-weight:600}
+
+/* ============ FAQ ============ */
+.faq-item{
+  background:white;border-radius:14px;border:1px solid var(--border);
+  margin-bottom:10px;overflow:hidden;
+}
+.faq-q{
+  padding:16px 20px;font-weight:600;font-size:.9rem;
+  display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;transition:.2s;
+}
+.faq-q:hover{background:#fafdff}
+.faq-q i{color:var(--gold);transition:transform .25s}
+.faq-item.open .faq-q i{transform:rotate(180deg)}
+.faq-a{
+  max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s;
+  padding:0 20px;color:#4e6e8f;font-size:.85rem;line-height:1.6;
+}
+.faq-item.open .faq-a{max-height:400px;padding:0 20px 18px}
+
+/* ============ LOGIN ============ */
+.login-screen{
+  position:fixed;inset:0;background:linear-gradient(135deg,#0b1e33,#0a1a2b);
+  display:flex;align-items:center;justify-content:center;
+  z-index:5000;padding:20px;transition:opacity .4s,visibility .4s;
+}
+.login-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-card{
+  background:white;border-radius:28px;padding:40px 36px;
+  width:100%;max-width:400px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.login-card .logo-big{
+  width:64px;height:64px;background:var(--gold);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:700;color:var(--navy);margin:0 auto 18px;
+  box-shadow:0 12px 24px -8px rgba(245,184,46,.5);
+}
+.login-card h2{font-family:'Poppins',sans-serif;text-align:center;font-size:1.4rem;margin-bottom:6px}
+.login-card p{text-align:center;color:var(--muted);font-size:.84rem;margin-bottom:26px}
+.login-card .form-group{margin-bottom:16px}
+.login-card .btn{width:100%;justify-content:center;padding:13px;font-size:.9rem}
+.login-hint{
+  text-align:center;font-size:.74rem;color:#8aa3c0;
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--border);
+}
+
+/* ============ MOBILE ============ */
+.sidebar-backdrop{
+  display:none;position:fixed;inset:0;
+  background:rgba(11,30,51,.5);z-index:99;
+  opacity:0;transition:opacity .3s;
+}
+.sidebar-backdrop.show{display:block;opacity:1}
+
+@media(max-width:1024px){
+  .sidebar{width:80px}
+  .sidebar .school-logo-text,
+  .sidebar .nav-item span,
+  .sidebar .nav-divider,
+  .sidebar .sidebar-footer span{display:none}
+  .sidebar-header{justify-content:center;padding:20px 0}
+  .nav-item{justify-content:center;padding:13px 0}
+  .nav-item i{font-size:1.15rem}
+  .nav-item.active::before{top:6px;bottom:6px}
+  .main{margin-left:80px;width:calc(100% - 80px);padding:18px 18px 40px}
+}
+@media(max-width:640px){
+  .sidebar{width:250px;transform:translateX(-100%);transition:transform .3s}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .school-logo-text,
+  .sidebar .nav-item span,
+  .sidebar .nav-divider,
+  .sidebar .sidebar-footer span{display:block}
+  .sidebar-header{justify-content:flex-start;padding:22px 20px 18px}
+  .nav-item{justify-content:flex-start;padding:12px 18px}
+  .main{margin-left:0;width:100%;padding:14px}
+  .menu-toggle{display:block}
+  .topbar{position:static;padding:10px 14px}
+  .search-mini{display:none}
+  .page-title h1{font-size:1.25rem}
+  .admin-badge .name{display:none}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .stat-card{padding:14px;gap:10px}
+  .stat-icon{width:40px;height:40px;min-width:40px;font-size:1.1rem;border-radius:12px}
+  .stat-info h3{font-size:1.3rem}
+  .stat-info p{font-size:.62rem}
+  .modal{max-height:95vh;border-radius:20px}
+  .modal-header,.modal-body,.modal-footer{padding-left:18px;padding-right:18px}
+  .toast-container{top:14px;right:14px;left:14px}
+  .toast{min-width:0}
+}
+@media(max-width:400px){
+  .stats-grid{grid-template-columns:1fr}
+  .section-head h2{font-size:1.05rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="logo-big">G</div>
+    <h2>Gurukul Public School</h2>
+    <p>Admin Panel · Secure Login</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> Username</label>
+        <input type="email" id="loginUser" placeholder="Admin email" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="loginPass" placeholder="Admin password" required>
+      </div>
+      <button type="submit" class="btn btn-gold"><i class="fas fa-sign-in-alt"></i> Login to Dashboard</button>
+    </form>
+    <div class="login-hint">
+      <i class="fas fa-info-circle"></i> Use the email and password created in Supabase Authentication.
+    </div>
+  </div>
+</div>
+
+<!-- ============ SIDEBAR BACKDROP ============ -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="school-logo-icon">G</div>
+    <div class="school-logo-text">
+      Gurukul<br><small>Public School</small>
+    </div>
+  </div>
+  <nav class="nav-menu" id="navMenu">
+    <button class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></button>
+    <button class="nav-item" data-page="settings"><i class="fas fa-globe"></i><span>Website Settings</span></button>
+    <button class="nav-item" data-page="homepage"><i class="fas fa-home"></i><span>Homepage</span></button>
+    <button class="nav-item" data-page="about"><i class="fas fa-info-circle"></i><span>About Us</span></button>
+    <button class="nav-item" data-page="team"><i class="fas fa-chalkboard-teacher"></i><span>Padhaku / Team</span></button>
+    <button class="nav-item" data-page="academics"><i class="fas fa-book-open"></i><span>Academics</span></button>
+    <button class="nav-item" data-page="facilities"><i class="fas fa-building"></i><span>Facilities</span></button>
+    <button class="nav-item" data-page="activities"><i class="fas fa-futbol"></i><span>Activities</span></button>
+    <button class="nav-item" data-page="gallery"><i class="fas fa-images"></i><span>Gallery</span></button>
+    <button class="nav-item" data-page="news"><i class="fas fa-newspaper"></i><span>News & Notices</span></button>
+    <button class="nav-item" data-page="events"><i class="fas fa-calendar-alt"></i><span>Events</span></button>
+    <button class="nav-item" data-page="admissions"><i class="fas fa-user-graduate"></i><span>Admissions</span></button>
+    <button class="nav-item" data-page="messages"><i class="fas fa-envelope"></i><span>Contact Messages</span></button>
+    <button class="nav-item" data-page="faqs"><i class="fas fa-question-circle"></i><span>FAQs</span></button>
+    <div class="nav-divider">System</div>
+    <button class="nav-item" data-page="adminsettings"><i class="fas fa-user-cog"></i><span>Admin Settings</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <span>© 2026 Gurukul Public School</span>
+  </div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <div class="page-title">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSub">Welcome back, Admin · Gurukul Public School</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-mini">
+        <i class="fas fa-search"></i>
+        <input type="text" id="globalSearch" placeholder="Search news, events, team...">
+      </div>
+      <div class="admin-badge" id="adminBadge">
+        <div class="admin-avatar">A</div>
+        <span class="name">Admin</span>
+        <i class="fas fa-chevron-down" style="color:#8aa3c0;font-size:.7rem"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="quick-bar">
+      <span class="item"><i class="fas fa-bullhorn" style="color:var(--gold)"></i> Announcement: <b id="quickAnnouncement">Admissions Open 2026–27</b></span>
+      <span class="sep">·</span>
+      <span class="item"><i class="fas fa-tag" style="color:var(--gold)"></i> Tagline: <b id="quickTagline">Nurturing Minds, Building Futures</b></span>
+    </div>
+
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-newspaper"></i></span> Latest News & Notices</h2>
+      <button class="btn btn-soft btn-sm" onclick="navTo('news')">View all <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="card-panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="dashNewsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-user-graduate"></i></span> Recent Admission Enquiries</h2>
+      <button class="btn btn-soft btn-sm" onclick="navTo('admissions')">View all <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="card-panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Parent</th><th>Class</th><th>Phone</th><th>Status</th></tr></thead>
+          <tbody id="dashAdmissionBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-comment-dots"></i></span> Recent Contact Messages</h2>
+      <button class="btn btn-soft btn-sm" onclick="navTo('messages')">View all <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="card-panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Subject</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="dashMessageBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ WEBSITE SETTINGS ============ -->
+  <div class="page" id="page-settings">
+    <div class="card-panel">
+      <div class="card-panel-body">
+        <form id="settingsForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label><i class="fas fa-school"></i> School Name</label>
+              <input type="text" id="sName">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-tag"></i> Website Tagline</label>
+              <input type="text" id="sTagline">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-bullhorn"></i> Announcement Bar</label>
+              <input type="text" id="sAnnouncement">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-toggle-on"></i> Announcement Active</label>
+              <select id="sAnnouncementActive">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-phone"></i> Phone</label>
+              <input type="tel" id="sPhone">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-envelope"></i> Email</label>
+              <input type="email" id="sEmail">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-map-marker-alt"></i> Address</label>
+              <input type="text" id="sAddress">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> School Timings</label>
+              <input type="text" id="sTimings">
+            </div>
+            <div class="form-group">
+              <label><i class="fab fa-facebook"></i> Facebook URL</label>
+              <input type="text" id="sFacebook">
+            </div>
+            <div class="form-group">
+              <label><i class="fab fa-instagram"></i> Instagram URL</label>
+              <input type="text" id="sInstagram">
+            </div>
+            <div class="form-group">
+              <label><i class="fab fa-youtube"></i> YouTube URL</label>
+              <input type="text" id="sYoutube">
+            </div>
+            <div class="form-group">
+              <label><i class="fab fa-whatsapp"></i> WhatsApp Number</label>
+              <input type="text" id="sWhatsapp">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Save Settings</button>
+            <button type="button" class="btn btn-ghost" onclick="loadSettingsForm()"><i class="fas fa-undo"></i> Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HOMEPAGE ============ -->
+  <div class="page" id="page-homepage">
+    <div class="card-panel">
+      <div class="card-panel-body">
+        <form id="homepageForm">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label><i class="fas fa-heading"></i> Hero Heading</label>
+              <input type="text" id="hHeroHeading">
+            </div>
+            <div class="form-group full">
+              <label><i class="fas fa-align-left"></i> Hero Subheading / Tagline</label>
+              <input type="text" id="hHeroSub">
+            </div>
+            <div class="form-group full">
+              <label><i class="fas fa-quote-left"></i> Welcome Message</label>
+              <textarea id="hWelcome"></textarea>
+            </div>
+            <div class="form-group full">
+              <label><i class="fas fa-user-tie"></i> Head's Message</label>
+              <textarea id="hHeadMsg"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Save Homepage</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ABOUT ============ -->
+  <div class="page" id="page-about">
+    <div class="card-panel">
+      <div class="card-panel-body">
+        <form id="aboutForm">
+          <div class="form-group">
+            <label><i class="fas fa-info-circle"></i> About School</label>
+            <textarea id="aAbout" rows="4"></textarea>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label><i class="fas fa-eye"></i> Vision</label>
+              <textarea id="aVision"></textarea>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-bullseye"></i> Mission</label>
+              <textarea id="aMission"></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-heart"></i> Our Values</label>
+            <textarea id="aValues"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Save About</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TEAM ============ -->
+  <div class="page" id="page-team">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-users"></i></span> Team Members (<span id="teamCount">0</span>)</h2>
+      <button class="btn btn-gold btn-sm" onclick="openTeamModal()"><i class="fas fa-plus"></i> Add Member</button>
+    </div>
+    <div class="grid-cards" id="teamGrid"></div>
+  </div>
+
+  <!-- ============ ACADEMICS ============ -->
+  <div class="page" id="page-academics">
+    <div class="card-panel">
+      <div class="card-panel-body">
+        <form id="academicsForm">
+          <div class="form-group">
+            <label><i class="fas fa-book"></i> Primary (Class 1–5)</label>
+            <textarea id="acPrimary"></textarea>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-book"></i> Middle School (Class 6–8)</label>
+            <textarea id="acMiddle"></textarea>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-book"></i> Secondary (Class 9–10)</label>
+            <textarea id="acSecondary"></textarea>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-book"></i> Senior Secondary (Class 11–12)</label>
+            <textarea id="acSenior"></textarea>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-flask"></i> Streams Available</label>
+            <input type="text" id="acStreams" placeholder="Science, Commerce, Arts">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Save Academics</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FACILITIES ============ -->
+  <div class="page" id="page-facilities">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-building"></i></span> Facilities (<span id="facilityCount">0</span>)</h2>
+      <button class="btn btn-gold btn-sm" onclick="openFacilityModal()"><i class="fas fa-plus"></i> Add Facility</button>
+    </div>
+    <div class="grid-cards" id="facilityGrid"></div>
+  </div>
+
+  <!-- ============ ACTIVITIES ============ -->
+  <div class="page" id="page-activities">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-futbol"></i></span> Activities (<span id="activityCount">0</span>)</h2>
+      <button class="btn btn-gold btn-sm" onclick="openActivityModal()"><i class="fas fa-plus"></i> Add Activity</button>
+    </div>
+    <div class="grid-cards" id="activityGrid"></div>
+  </div>
+
+  <!-- ============ GALLERY ============ -->
+  <div class="page" id="page-gallery">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-images"></i></span> Gallery (<span id="galleryCount">0</span>)</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="galleryFilter" class="btn btn-soft btn-sm" style="padding:8px 14px;border-radius:30px;font-weight:600" onchange="renderGallery()">
+          <option value="">All Categories</option>
+        </select>
+        <button class="btn btn-gold btn-sm" onclick="openGalleryModal()"><i class="fas fa-plus"></i> Add Image</button>
+      </div>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+
+  <!-- ============ NEWS ============ -->
+  <div class="page" id="page-news">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-newspaper"></i></span> News & Notices (<span id="newsCount">0</span>)</h2>
+      <button class="btn btn-gold btn-sm" onclick="openNewsModal()"><i class="fas fa-plus"></i> Add News</button>
+    </div>
+    <div class="card-panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Date</th><th>Status</th><th class="actions">Actions</th></tr></thead>
+          <tbody id="newsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EVENTS ============ -->
+  <div class="page" id="page-events">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-calendar-alt"></i></span> Events (<span id="eventCount">0</span>)</h2>
+      <button class="btn btn-gold btn-sm" onclick="openEventModal()"><i class="fas fa-plus"></i> Add Event</button>
+    </div>
+    <div class="grid-cards" id="eventGrid"></div>
+  </div>
+
+  <!-- ============ ADMISSIONS ============ -->
+  <div class="page" id="page-admissions">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-user-graduate"></i></span> Admission Enquiries (<span id="admissionCount">0</span>)</h2>
+    </div>
+    <div class="card-panel">
+      <div class="card-panel-body" style="padding-bottom:8px">
+        <div class="form-grid">
+          <div class="form-group">
+            <label><i class="fas fa-info-circle"></i> Admission Info</label>
+            <input type="text" id="admInfo" placeholder="Admissions Open for 2026–27">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-list"></i> Available Classes</label>
+            <input type="text" id="admClasses" placeholder="Class 1 to Class 12">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-check-circle"></i> Eligibility</label>
+            <input type="text" id="admEligibility" placeholder="Age 5+ for Class 1">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-file-alt"></i> Required Documents</label>
+            <input type="text" id="admDocs" placeholder="Birth Certificate, Aadhaar, Photos">
+          </div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="saveAdmissionInfo()"><i class="fas fa-save"></i> Save Info</button>
+      </div>
+    </div>
+    <div class="card-panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Parent</th><th>Class</th><th>Phone</th><th>Email</th><th>Status</th><th class="actions">Actions</th></tr></thead>
+          <tbody id="admissionBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MESSAGES ============ -->
+  <div class="page" id="page-messages">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-envelope"></i></span> Contact Messages (<span id="messageCount">0</span>)</h2>
+    </div>
+    <div class="card-panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Subject</th><th>Date</th><th>Status</th><th class="actions">Actions</th></tr></thead>
+          <tbody id="messageBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FAQS ============ -->
+  <div class="page" id="page-faqs">
+    <div class="section-head">
+      <h2><span class="icon-badge"><i class="fas fa-question-circle"></i></span> FAQs (<span id="faqCount">0</span>)</h2>
+      <button class="btn btn-gold btn-sm" onclick="openFaqModal()"><i class="fas fa-plus"></i> Add FAQ</button>
+    </div>
+    <div id="faqList"></div>
+  </div>
+
+  <!-- ============ ADMIN SETTINGS ============ -->
+  <div class="page" id="page-adminsettings">
+    <div class="card-panel">
+      <div class="card-panel-body">
+        <h3 style="font-family:Poppins;font-size:1.1rem;margin-bottom:16px"><i class="fas fa-database" style="color:var(--gold)"></i> Data Management</h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px">All data is stored locally in your browser (localStorage). Export a backup or reset to defaults.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-soft" onclick="exportData()"><i class="fas fa-download"></i> Export Backup</button>
+          <button class="btn btn-soft" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Import Backup</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+          <button class="btn btn-danger" onclick="resetAll()"><i class="fas fa-trash-alt"></i> Reset All Data</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0">
+        <h3 style="font-family:Poppins;font-size:1.1rem;margin-bottom:16px"><i class="fas fa-user-shield" style="color:var(--gold)"></i> Change Password</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="text" id="newPass" placeholder="Enter new password">
+          </div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="changePassword()"><i class="fas fa-key"></i> Update Password</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ UNIVERSAL MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalTitle">Title</h3>
+        <p id="modalSub">Subtitle</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ================================================================
+   GURUKUL PUBLIC SCHOOL — ADMIN PANEL LOGIC
+   ================================================================ */
+
+const STORAGE_KEY = 'gps_admin_data_v1';
+const SESSION_KEY = 'gps_admin_session';
+
+/* ---------- DEFAULT SEED DATA ---------- */
+const DEFAULTS = {
+  settings: {
+    name: 'Gurukul Public School',
+    tagline: 'Nurturing Minds, Building Futures',
+    announcement: 'Admissions Open for Session 2026–27',
+    announcementActive: 'true',
+    phone: '+91 98765 43210',
+    email: 'info@gurukulpublicschool.in',
+    address: 'Raebareli–Pratapgarh, Uttar Pradesh, India',
+    timings: 'Mon–Sat · 8:00 AM – 3:00 PM',
+    facebook: 'https://facebook.com/gurukulpublicschool',
+    instagram: 'https://instagram.com/gurukulpublicschool',
+    youtube: 'https://youtube.com/@gurukulpublicschool',
+    whatsapp: '+91 98765 43210'
+  },
+  homepage: {
+    heroHeading: 'Gurukul Public School',
+    heroSub: 'Nurturing Minds, Building Futures',
+    welcome: 'Gurukul Public School mein students ko academic education ke saath discipline, values, creativity, confidence aur overall personality development par focus karte hue learning environment provide kiya jata hai.',
+    headMsg: '"Education is not only about academic achievement; it is about developing responsible, confident and compassionate individuals."'
+  },
+  about: {
+    about: 'Gurukul Public School, located in Raebareli–Pratapgarh, Uttar Pradesh, is committed to providing quality education from Class 1 to Class 12. Our school blends traditional values with modern teaching methodologies to create a nurturing environment where every child can thrive.',
+    vision: 'To prepare students for the future with quality education and strong values, empowering them to become lifelong learners and responsible global citizens.',
+    mission: 'To develop academic excellence along with discipline, creativity, confidence, leadership and social responsibility in every student.',
+    values: 'Integrity, Respect, Excellence, Compassion, Responsibility, and Lifelong Learning.'
+  },
+  academics: {
+    primary: 'Classes 1 to 5 focus on foundational literacy, numeracy, and holistic development through activity-based learning.',
+    middle: 'Classes 6 to 8 emphasise conceptual understanding, critical thinking, and co-curricular participation.',
+    secondary: 'Classes 9 and 10 prepare students for board examinations with strong academic rigour and practical exposure.',
+    senior: 'Classes 11 and 12 offer specialised streams with expert faculty guidance and career orientation.',
+    streams: 'Science, Commerce, Arts / Humanities'
+  },
+  team: [
+    { id: 1, name: 'Dr. Rajesh Sharma', designation: 'Head / Principal', bio: 'With over 25 years of experience in education, Dr. Sharma leads Gurukul Public School with vision and dedication.', thoughts: 'Education is the most powerful weapon which you can use to change the world.', voice: 'Voice message available', published: true },
+    { id: 2, name: 'Mrs. Anjali Pandey', designation: 'Director', bio: 'Mrs. Pandey oversees the academic and administrative excellence of the school.', thoughts: 'Every child is unique and deserves an environment where they can flourish.', voice: 'Voice message available', published: true },
+    { id: 3, name: 'Mr. Vikas Kumar', designation: 'Senior Coordinator', bio: 'Mr. Kumar coordinates the senior wing and examination cell.', thoughts: 'Discipline and dedication are the pillars of success.', voice: '', published: true },
+    { id: 4, name: 'Ms. Shweta Pathak', designation: 'Primary Teacher', bio: 'Ms. Pathak nurtures young minds with creativity and care.', thoughts: 'Learning should be joyful and meaningful.', voice: 'Voice message available', published: true }
+  ],
+  facilities: [
+    { id: 1, title: 'Smart Classrooms', desc: 'Digital boards and interactive learning in every classroom.', icon: 'fa-chalkboard' },
+    { id: 2, title: 'Science Laboratory', desc: 'Well-equipped Physics, Chemistry and Biology labs.', icon: 'fa-flask' },
+    { id: 3, title: 'Computer Lab', desc: 'Modern computer lab with high-speed internet.', icon: 'fa-laptop' },
+    { id: 4, title: 'Library', desc: 'Rich collection of books, journals and e-resources.', icon: 'fa-book' },
+    { id: 5, title: 'Sports Ground', desc: 'Spacious playground for cricket, football and athletics.', icon: 'fa-futbol' },
+    { id: 6, title: 'Transportation', desc: 'Safe and reliable school bus service across nearby areas.', icon: 'fa-bus' },
+    { id: 7, title: 'CCTV Security', desc: '24×7 campus surveillance for student safety.', icon: 'fa-video' },
+    { id: 8, title: 'Medical / First Aid', desc: 'Trained staff and first-aid facility on campus.', icon: 'fa-briefcase-medical' }
+  ],
+  activities: [
+    { id: 1, title: 'Annual Function', date: '2026-02-05', desc: 'Grand cultural celebration showcasing student talent.', icon: 'fa-star' },
+    { id: 2, title: 'Sports Day', date: '2026-01-15', desc: 'Inter-house athletics and team sports competitions.', icon: 'fa-running' },
+    { id: 3, title: 'Science Exhibition', date: '2025-12-10', desc: 'Students present innovative science projects.', icon: 'fa-flask' },
+    { id: 4, title: 'Cultural Fest', date: '2025-11-20', desc: 'Music, dance and drama performances by students.', icon: 'fa-music' }
+  ],
+  gallery: [
+    { id: 1, title: 'School Campus', category: 'Campus', icon: 'fa-school' },
+    { id: 2, title: 'Annual Function', category: 'Events', icon: 'fa-star' },
+    { id: 3, title: 'Sports Meet', category: 'Sports', icon: 'fa-running' },
+    { id: 4, title: 'Classroom', category: 'Classrooms', icon: 'fa-chalkboard' },
+    { id: 5, title: 'Science Lab', category: 'Facilities', icon: 'fa-flask' },
+    { id: 6, title: 'Independence Day', category: 'Celebrations', icon: 'fa-flag' }
+  ],
+  galleryCategories: ['Campus', 'Classrooms', 'Events', 'Sports', 'Annual Function', 'Activities', 'Students', 'Celebrations', 'Facilities'],
+  news: [
+    { id: 1, title: 'Admissions Open for Session 2026–27', date: '2026-02-10', status: 'Published', desc: 'Applications are now open for Class 1 to Class 12.' },
+    { id: 2, title: 'Annual Function – "Srijan 2026"', date: '2026-02-05', status: 'Published', desc: 'Join us for the grand annual cultural celebration.' },
+    { id: 3, title: 'Half-Yearly Examination Schedule', date: '2026-01-28', status: 'Draft', desc: 'Examination datesheet released for all classes.' },
+    { id: 4, title: 'Parent-Teacher Meeting', date: '2026-01-20', status: 'Published', desc: 'PTM scheduled for all sections on 25th January.' }
+  ],
+  events: [
+    { id: 1, title: 'Annual Function 2026', date: '2026-02-05', time: '10:00 AM', location: 'School Auditorium', desc: 'Grand cultural celebration.', status: 'Published' },
+    { id: 2, title: 'Sports Day', date: '2026-03-12', time: '9:00 AM', location: 'School Ground', desc: 'Inter-house sports competition.', status: 'Published' },
+    { id: 3, title: 'Science Exhibition', date: '2026-04-18', time: '11:00 AM', location: 'Science Block', desc: 'Student science projects display.', status: 'Draft' }
+  ],
+  admissions: [
+    { id: 1, student: 'Ananya Singh', parent: 'Rakesh Singh', phone: '+91 98765 43210', email: 'rakesh@example.com', cls: 'Class 6', message: 'Please share fee details.', date: '2026-02-12', status: 'New' },
+    { id: 2, student: 'Vihaan Gupta', parent: 'Neha Gupta', phone: '+91 98123 45678', email: 'neha@example.com', cls: 'Class 9', message: 'Looking for admission.', date: '2026-02-11', status: 'Read' },
+    { id: 3, student: 'Ishita Verma', parent: 'Alok Verma', phone: '+91 70123 98765', email: 'alok@example.com', cls: 'Class 11 (Science)', message: 'Stream availability?', date: '2026-02-10', status: 'New' }
+  ],
+  admissionInfo: {
+    info: 'Admissions Open for 2026–27',
+    classes: 'Class 1 to Class 12',
+    eligibility: 'Age 5+ for Class 1',
+    docs: 'Birth Certificate, Aadhaar, Passport Photos'
+  },
+  messages: [
+    { id: 1, name: 'Sunita Mishra', subject: 'Transport facility enquiry', message: 'Do you provide bus service to my area?', date: '2026-02-12', status: 'Unread', email: 'sunita@example.com', phone: '+91 90000 11111' },
+    { id: 2, name: 'Mohd. Arif', subject: 'Fee structure for Class 11', message: 'Please share the fee structure.', date: '2026-02-11', status: 'Read', email: 'arif@example.com', phone: '+91 90000 22222' },
+    { id: 3, name: 'Pooja Tiwari', subject: 'Request for campus visit', message: 'I want to visit the campus.', date: '2026-02-09', status: 'Unread', email: 'pooja@example.com', phone: '+91 90000 33333' }
+  ],
+  faqs: [
+    { id: 1, q: 'School mein kaunsi classes available hain?', a: 'Class 1 se Class 12 tak.' },
+    { id: 2, q: 'Admission kaise le sakte hain?', a: 'Admission enquiry form ya school contact details ke through.' },
+    { id: 3, q: 'School ka address kya hai?', a: 'Raebareli–Pratapgarh, Uttar Pradesh.' },
+    { id: 4, q: 'School timings kya hain?', a: 'Monday se Saturday, 8:00 AM se 3:00 PM.' }
+  ]
+};
+
+/* ---------- SUPABASE ---------- */
+const SUPABASE_URL = "https://vswrqzmpseacvhcarvqg.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_fhsCGVKIrIEgXbgsF_RO9g_NORfWCwC";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+/* ---------- STATE ---------- */
+let DB = loadData();
+let currentPage = 'dashboard';
+let editingId = null;
+let editingType = null;
+
+function normalizeDB(data) {
+  const out = Object.assign(structuredClone(DEFAULTS), data || {});
+  const arrayKeys = ['team','facilities','activities','gallery','news','events','admissions','messages','faqs'];
+  arrayKeys.forEach(function(k) {
+    if (out[k] && !Array.isArray(out[k]) && typeof out[k] === 'object') out[k] = Object.values(out[k]);
+    if (!Array.isArray(out[k])) out[k] = [];
+  });
+  out.galleryCategories = Array.isArray(out.galleryCategories) ? out.galleryCategories : [];
+  return out;
+}
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return normalizeDB(JSON.parse(raw));
+  } catch(e) { console.warn('Local load failed', e); }
+  return normalizeDB(DEFAULTS);
+}
+
+let persistedAdmissionIds = new Set();
+let persistedMessageIds = new Set();
+
+async function loadRemoteData() {
+  const [contentResult, admissionsResult, messagesResult] = await Promise.all([
+    supabaseClient.from('site_content').select('data').eq('id', 1).maybeSingle(),
+    supabaseClient.from('admissions').select('*').order('id', { ascending: false }),
+    supabaseClient.from('messages').select('*').order('id', { ascending: false })
+  ]);
+  if (contentResult.error) throw contentResult.error;
+  if (admissionsResult.error) throw admissionsResult.error;
+  if (messagesResult.error) throw messagesResult.error;
+  if (contentResult.data && contentResult.data.data && Object.keys(contentResult.data.data).length) DB = normalizeDB(contentResult.data.data);
+  DB.admissions = admissionsResult.data || [];
+  DB.messages = messagesResult.data || [];
+  persistedAdmissionIds = new Set(DB.admissions.map(x => String(x.id)));
+  persistedMessageIds = new Set(DB.messages.map(x => String(x.id)));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+}
+
+async function saveData() {
+  try {
+    const publicData = structuredClone(DB);
+    delete publicData.admissions;
+    delete publicData.messages;
+    const r1 = await supabaseClient.from('site_content').upsert({ id: 1, data: publicData, updated_at: new Date().toISOString() });
+    if (r1.error) throw r1.error;
+
+    // Keep admission/message records synchronized after admin status/delete changes.
+    const currentAdmissionIds = new Set((DB.admissions || []).map(x => String(x.id)));
+    const currentMessageIds = new Set((DB.messages || []).map(x => String(x.id)));
+    const deletedAdmissions = [...persistedAdmissionIds].filter(id => !currentAdmissionIds.has(id));
+    const deletedMessages = [...persistedMessageIds].filter(id => !currentMessageIds.has(id));
+    if (deletedAdmissions.length) {
+      const r = await supabaseClient.from('admissions').delete().in('id', deletedAdmissions.map(Number));
+      if (r.error) throw r.error;
+    }
+    if (deletedMessages.length) {
+      const r = await supabaseClient.from('messages').delete().in('id', deletedMessages.map(Number));
+      if (r.error) throw r.error;
+    }
+    if (DB.admissions && DB.admissions.length) {
+      const r = await supabaseClient.from('admissions').upsert(DB.admissions);
+      if (r.error) throw r.error;
+    }
+    if (DB.messages && DB.messages.length) {
+      const r = await supabaseClient.from('messages').upsert(DB.messages);
+      if (r.error) throw r.error;
+    }
+    persistedAdmissionIds = currentAdmissionIds;
+    persistedMessageIds = currentMessageIds;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+    return true;
+  } catch(e) {
+    console.error('Supabase save failed', e);
+    toast('Could not save to Supabase: ' + (e.message || 'Unknown error'), 'error');
+    return false;
+  }
+}
+
+async function seedIfNeeded() {
+  const { data, error } = await supabaseClient.from('site_content').select('id').eq('id', 1).maybeSingle();
+  if (error) throw error;
+  if (!data) {
+    DB = normalizeDB(DEFAULTS);
+    DB.admissions = [];
+    DB.messages = [];
+    await saveData();
+  }
+}
+
+async function resetAll() {
+  if (!confirm('Reset ALL data to defaults? This cannot be undone.')) return;
+  DB = normalizeDB(DEFAULTS);
+  DB.admissions = [];
+  DB.messages = [];
+  if (await saveData()) {
+    refreshAll();
+    toast('All data reset to defaults', 'success');
+  }
+}
+
+/* ---------- AUTH ---------- */
+async function checkSession() {
+  const { data } = await supabaseClient.auth.getSession();
+  if (data && data.session) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    await loadRemoteData();
+    refreshAll();
+  }
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    toast(error.message || 'Invalid credentials', 'error');
+    return;
+  }
+  document.getElementById('loginScreen').classList.add('hidden');
+  try { await loadRemoteData(); await seedIfNeeded(); refreshAll(); } catch(err) { toast('Database load failed: ' + err.message, 'error'); }
+  toast('Welcome, Admin!', 'success');
+});
+
+async function changePassword() {
+  const np = document.getElementById('newPass').value.trim();
+  if (!np || np.length < 6) { toast('Password must be 6+ characters', 'error'); return; }
+  const { error } = await supabaseClient.auth.updateUser({ password: np });
+  if (error) { toast(error.message, 'error'); return; }
+  toast('Password updated successfully', 'success');
+  document.getElementById('newPass').value = '';
+}
+
+async function subscribeRealtime() {
+  supabaseClient.channel('admin-live-updates')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'site_content', filter: 'id=eq.1' }, function(payload) {
+      if (payload.new && payload.new.data) {
+        DB = normalizeDB(payload.new.data);
+        loadRemoteData().then(refreshAll).catch(console.error);
+      }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'admissions' }, function() {
+      loadRemoteData().then(refreshAll).catch(console.error);
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, function() {
+      loadRemoteData().then(refreshAll).catch(console.error);
+    })
+    .subscribe();
+}
+
+/* ---------- NAVIGATION ---------- */
+const pageTitles = {
+  dashboard: ['Dashboard', 'Welcome back, Admin · Gurukul Public School'],
+  settings: ['Website Settings', 'Manage school name, contact, social links'],
+  homepage: ['Homepage', 'Edit hero, welcome and head message'],
+  about: ['About Us', 'Manage school information, vision, mission, values'],
+  team: ['Padhaku / Our Team', 'Add, edit, delete team members'],
+  academics: ['Academics', 'Manage class groups and streams'],
+  facilities: ['Facilities', 'Manage school facilities'],
+  activities: ['Activities', 'Manage co-curricular activities'],
+  gallery: ['Gallery', 'Manage photos and categories'],
+  news: ['News & Notices', 'Create, publish and manage news'],
+  events: ['Events', 'Manage upcoming school events'],
+  admissions: ['Admissions', 'View admission enquiries and info'],
+  messages: ['Contact Messages', 'View messages from contact form'],
+  faqs: ['FAQs', 'Manage frequently asked questions'],
+  adminsettings: ['Admin Settings', 'Backup, restore and manage data']
+};
+
+function navTo(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  const t = pageTitles[page] || ['Dashboard', ''];
+  document.getElementById('pageTitle').textContent = t[0];
+  document.getElementById('pageSub').textContent = t[1];
+  closeSidebar();
+  renderPage(page);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('navMenu').addEventListener('click', e => {
+  const btn = e.target.closest('.nav-item');
+  if (btn) navTo(btn.dataset.page);
+});
+
+/* ---------- SIDEBAR TOGGLE ---------- */
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('sidebarBackdrop');
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.add('open');
+  backdrop.classList.add('show');
+});
+backdrop.addEventListener('click', closeSidebar);
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  backdrop.classList.remove('show');
+}
+
+/* ---------- TOAST ---------- */
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+  el.innerHTML = `<i class="fas ${icons[type]}"></i><span>${escapeHtml(msg)}</span>`;
+  c.appendChild(el);
+  setTimeout(() => { el.classList.add('hide'); setTimeout(() => el.remove(), 300); }, 3200);
+}
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
+/* ---------- RENDER PAGE ---------- */
+function renderPage(page) {
+  switch(page) {
+    case 'dashboard': renderDashboard(); break;
+    case 'settings': loadSettingsForm(); break;
+    case 'homepage': loadHomepageForm(); break;
+    case 'about': loadAboutForm(); break;
+    case 'team': renderTeam(); break;
+    case 'academics': loadAcademicsForm(); break;
+    case 'facilities': renderFacilities(); break;
+    case 'activities': renderActivities(); break;
+    case 'gallery': renderGallery(); break;
+    case 'news': renderNews(); break;
+    case 'events': renderEvents(); break;
+    case 'admissions': renderAdmissions(); break;
+    case 'messages': renderMessages(); break;
+    case 'faqs': renderFaqs(); break;
+    case 'adminsettings': break;
+  }
+}
+
+function refreshAll() {
+  renderDashboard();
+  renderPage(currentPage);
+}
+
+/* ================================================================
+   DASHBOARD
+   ================================================================ */
+function renderDashboard() {
+  const stats = [
+    { icon: 'fa-newspaper', label: 'News & Notices', value: DB.news.length },
+    { icon: 'fa-images', label: 'Gallery Images', value: DB.gallery.length },
+    { icon: 'fa-users', label: 'Team Members', value: DB.team.length },
+    { icon: 'fa-calendar-alt', label: 'Events', value: DB.events.length },
+    { icon: 'fa-user-graduate', label: 'Admission Enquiries', value: DB.admissions.length },
+    { icon: 'fa-comment-dots', label: 'Contact Messages', value: DB.messages.length }
+  ];
+  document.getElementById('statsGrid').innerHTML = stats.map(s => `
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas ${s.icon}"></i></div>
+      <div class="stat-info"><h3>${s.value}</h3><p>${s.label}</p></div>
+    </div>
+  `).join('');
+
+  document.getElementById('quickAnnouncement').textContent = DB.settings.announcement || '—';
+  document.getElementById('quickTagline').textContent = DB.settings.tagline || '—';
+
+  const news = DB.news.slice(0, 4);
+  document.getElementById('dashNewsBody').innerHTML = news.length ? news.map(n => `
+    <tr>
+      <td>${escapeHtml(n.title)}</td>
+      <td>${formatDate(n.date)}</td>
+      <td>${statusBadge(n.status)}</td>
+    </tr>
+  `).join('') : `<tr><td colspan="3" class="empty"><i class="fas fa-inbox"></i><br>No news yet</td></tr>`;
+
+  const adm = DB.admissions.slice(0, 3);
+  document.getElementById('dashAdmissionBody').innerHTML = adm.length ? adm.map(a => `
+    <tr>
+      <td>${escapeHtml(a.student)}</td>
+      <td>${escapeHtml(a.parent)}</td>
+      <td>${escapeHtml(a.cls)}</td>
+      <td>${escapeHtml(a.phone)}</td>
+      <td>${a.status === 'New' ? '<span class="badge gold">New</span>' : '<span class="badge green">Read</span>'}</td>
+    </tr>
+  `).join('') : `<tr><td colspan="5" class="empty"><i class="fas fa-inbox"></i><br>No enquiries</td></tr>`;
+
+  const msg = DB.messages.slice(0, 3);
+  document.getElementById('dashMessageBody').innerHTML = msg.length ? msg.map(m => `
+    <tr>
+      <td>${escapeHtml(m.name)}</td>
+      <td>${escapeHtml(m.subject)}</td>
+      <td>${formatDate(m.date)}</td>
+      <td>${m.status === 'Unread' ? '<span class="badge gold">Unread</span>' : '<span class="badge green">Read</span>'}</td>
+    </tr>
+  `).join('') : `<tr><td colspan="4" class="empty"><i class="fas fa-inbox"></i><br>No messages</td></tr>`;
+}
+
+function statusBadge(status) {
+  if (status === 'Published') return '<span class="badge green"><span class="dot"></span> Published</span>';
+  if (status === 'Draft') return '<span class="badge gold"><span class="dot draft"></span> Draft</span>';
+  return `<span class="badge blue">${escapeHtml(status)}</span>`;
+}
+function formatDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+/* ================================================================
+   SETTINGS
+   ================================================================ */
+function loadSettingsForm() {
+  const s = DB.settings;
+  ['name','tagline','announcement','announcementActive','phone','email','address','timings','facebook','instagram','youtube','whatsapp'].forEach(k => {
+    const el = document.getElementById('s' + k.charAt(0).toUpperCase() + k.slice(1));
+    if (el) el.value = s[k] || '';
+  });
+}
+document.getElementById('settingsForm').addEventListener('submit', e => {
+  e.preventDefault();
+  DB.settings = {
+    name: val('sName'),
+    tagline: val('sTagline'),
+    announcement: val('sAnnouncement'),
+    announcementActive: val('sAnnouncementActive'),
+    phone: val('sPhone'),
+    email: val('sEmail'),
+    address: val('sAddress'),
+    timings: val('sTimings'),
+    facebook: val('sFacebook'),
+    instagram: val('sInstagram'),
+    youtube: val('sYoutube'),
+    whatsapp: val('sWhatsapp')
+  };
+  saveData();
+  toast('Website settings saved', 'success');
+  renderDashboard();
+});
+function val(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+/* ================================================================
+   HOMEPAGE
+   ================================================================ */
+function loadHomepageForm() {
+  const h = DB.homepage;
+  document.getElementById('hHeroHeading').value = h.heroHeading || '';
+  document.getElementById('hHeroSub').value = h.heroSub || '';
+  document.getElementById('hWelcome').value = h.welcome || '';
+  document.getElementById('hHeadMsg').value = h.headMsg || '';
+}
+document.getElementById('homepageForm').addEventListener('submit', e => {
+  e.preventDefault();
+  DB.homepage = {
+    heroHeading: val('hHeroHeading'),
+    heroSub: val('hHeroSub'),
+    welcome: val('hWelcome'),
+    headMsg: val('hHeadMsg')
+  };
+  saveData();
+  toast('Homepage content saved', 'success');
+});
+
+/* ================================================================
+   ABOUT
+   ================================================================ */
+function loadAboutForm() {
+  const a = DB.about;
+  document.getElementById('aAbout').value = a.about || '';
+  document.getElementById('aVision').value = a.vision || '';
+  document.getElementById('aMission').value = a.mission || '';
+  document.getElementById('aValues').value = a.values || '';
+}
+document.getElementById('aboutForm').addEventListener('submit', e => {
+  e.preventDefault();
+  DB.about = {
+    about: val('aAbout'),
+    vision: val('aVision'),
+    mission: val('aMission'),
+    values: val('aValues')
+  };
+  saveData();
+  toast('About page saved', 'success');
+});
+
+/* ================================================================
+   TEAM
+   ================================================================ */
+function renderTeam() {
+  const grid = document.getElementById('teamGrid');
+  document.getElementById('teamCount').textContent = DB.team.length;
+  if (!DB.team.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-users"></i><h4>No team members</h4><p>Click "Add Member" to create one.</p></div>`;
+    return;
+  }
+  grid.innerHTML = DB.team.map(m => `
+    <div class="info-card">
+      <div class="card-top">
+        <div class="avatar gold">${initials(m.name)}</div>
+        <div>
+          <h4>${escapeHtml(m.name)}</h4>
+          <div class="sub">${escapeHtml(m.designation)}</div>
+        </div>
+      </div>
+      <div class="desc">${escapeHtml(m.bio || '')}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        ${m.voice ? `<span class="chip"><i class="fas fa-microphone-alt"></i> Voice</span>` : ''}
+        ${m.published ? `<span class="chip" style="background:#e2f5e9;color:#1a6e3b"><i class="fas fa-check"></i> Published</span>` : `<span class="chip" style="background:#fff3d6;color:#7a5800"><i class="fas fa-eye-slash"></i> Hidden</span>`}
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-soft btn-sm" onclick="openTeamModal(${m.id})"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTeam(${m.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function initials(name) {
+  return (name || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+}
+
+function openTeamModal(id) {
+  editingType = 'team';
+  editingId = id || null;
+  const m = id ? DB.team.find(x => x.id === id) : { name:'', designation:'', bio:'', thoughts:'', voice:'', published:true };
+  document.getElementById('modalTitle').textContent = id ? 'Edit Team Member' : 'Add Team Member';
+  document.getElementById('modalSub').textContent = 'Fill in the member details';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-grid">
+      <div class="form-group"><label>Full Name <span class="req">*</span></label><input type="text" id="mName" value="${escapeHtml(m.name)}"></div>
+      <div class="form-group"><label>Designation <span class="req">*</span></label><input type="text" id="mDesig" value="${escapeHtml(m.designation)}"></div>
+      <div class="form-group full"><label>Short Bio</label><textarea id="mBio">${escapeHtml(m.bio)}</textarea></div>
+      <div class="form-group full"><label>Thoughts / Message</label><textarea id="mThoughts">${escapeHtml(m.thoughts)}</textarea></div>
+      <div class="form-group"><label>Voice Message Note</label><input type="text" id="mVoice" value="${escapeHtml(m.voice)}" placeholder="e.g. Voice message available"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="mPublished">
+          <option value="true" ${m.published ? 'selected':''}>Published</option>
+          <option value="false" ${!m.published ? 'selected':''}>Hidden</option>
+        </select>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveTeam()"><i class="fas fa-save"></i> Save Member</button>
+  `;
+  openModal();
+}
+function saveTeam() {
+  const name = val('mName'), desig = val('mDesig');
+  if (!name || !desig) { toast('Name and designation are required', 'error'); return; }
+  const data = {
+    name, designation: desig,
+    bio: val('mBio'), thoughts: val('mThoughts'),
+    voice: val('mVoice'),
+    published: val('mPublished') === 'true'
+  };
+  if (editingId) {
+    const idx = DB.team.findIndex(x => x.id === editingId);
+    DB.team[idx] = { ...DB.team[idx], ...data };
+    toast('Team member updated', 'success');
+  } else {
+    DB.team.push({ id: Date.now(), ...data });
+    toast('Team member added', 'success');
+  }
+  saveData(); closeModal(); renderTeam();
+}
+function deleteTeam(id) {
+  if (!confirm('Delete this team member?')) return;
+  DB.team = DB.team.filter(x => x.id !== id);
+  saveData(); renderTeam(); toast('Member deleted', 'success');
+}
+
+/* ================================================================
+   ACADEMICS
+   ================================================================ */
+function loadAcademicsForm() {
+  const a = DB.academics;
+  document.getElementById('acPrimary').value = a.primary || '';
+  document.getElementById('acMiddle').value = a.middle || '';
+  document.getElementById('acSecondary').value = a.secondary || '';
+  document.getElementById('acSenior').value = a.senior || '';
+  document.getElementById('acStreams').value = a.streams || '';
+}
+document.getElementById('academicsForm').addEventListener('submit', e => {
+  e.preventDefault();
+  DB.academics = {
+    primary: val('acPrimary'), middle: val('acMiddle'),
+    secondary: val('acSecondary'), senior: val('acSenior'),
+    streams: val('acStreams')
+  };
+  saveData(); toast('Academics saved', 'success');
+});
+
+/* ================================================================
+   FACILITIES
+   ================================================================ */
+function renderFacilities() {
+  const grid = document.getElementById('facilityGrid');
+  document.getElementById('facilityCount').textContent = DB.facilities.length;
+  if (!DB.facilities.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-building"></i><h4>No facilities</h4><p>Click "Add Facility" to create one.</p></div>`;
+    return;
+  }
+  grid.innerHTML = DB.facilities.map(f => `
+    <div class="info-card">
+      <div class="card-top">
+        <div class="avatar"><i class="fas ${f.icon || 'fa-building'}"></i></div>
+        <div><h4>${escapeHtml(f.title)}</h4></div>
+      </div>
+      <div class="desc">${escapeHtml(f.desc)}</div>
+      <div class="card-actions">
+        <button class="btn btn-soft btn-sm" onclick="openFacilityModal(${f.id})"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteFacility(${f.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function openFacilityModal(id) {
+  editingType = 'facility'; editingId = id || null;
+  const f = id ? DB.facilities.find(x => x.id === id) : { title:'', desc:'', icon:'fa-building' };
+  document.getElementById('modalTitle').textContent = id ? 'Edit Facility' : 'Add Facility';
+  document.getElementById('modalSub').textContent = 'Facility details';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Title <span class="req">*</span></label><input type="text" id="fTitle" value="${escapeHtml(f.title)}"></div>
+    <div class="form-group"><label>Description</label><textarea id="fDesc">${escapeHtml(f.desc)}</textarea></div>
+    <div class="form-group"><label>Font Awesome Icon Class</label><input type="text" id="fIcon" value="${escapeHtml(f.icon || 'fa-building')}" placeholder="fa-flask"><div class="hint">e.g. fa-book, fa-flask, fa-bus</div></div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveFacility()"><i class="fas fa-save"></i> Save</button>
+  `;
+  openModal();
+}
+function saveFacility() {
+  const title = val('fTitle');
+  if (!title) { toast('Title required', 'error'); return; }
+  const data = { title, desc: val('fDesc'), icon: val('fIcon') || 'fa-building' };
+  if (editingId) {
+    const idx = DB.facilities.findIndex(x => x.id === editingId);
+    DB.facilities[idx] = { ...DB.facilities[idx], ...data };
+    toast('Facility updated', 'success');
+  } else {
+    DB.facilities.push({ id: Date.now(), ...data });
+    toast('Facility added', 'success');
+  }
+  saveData(); closeModal(); renderFacilities();
+}
+function deleteFacility(id) {
+  if (!confirm('Delete this facility?')) return;
+  DB.facilities = DB.facilities.filter(x => x.id !== id);
+  saveData(); renderFacilities(); toast('Facility deleted', 'success');
+}
+
+/* ================================================================
+   ACTIVITIES
+   ================================================================ */
+function renderActivities() {
+  const grid = document.getElementById('activityGrid');
+  document.getElementById('activityCount').textContent = DB.activities.length;
+  if (!DB.activities.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-futbol"></i><h4>No activities</h4><p>Click "Add Activity" to create one.</p></div>`;
+    return;
+  }
+  grid.innerHTML = DB.activities.map(a => `
+    <div class="info-card">
+      <div class="card-top">
+        <div class="avatar gold"><i class="fas ${a.icon || 'fa-star'}"></i></div>
+        <div><h4>${escapeHtml(a.title)}</h4><div class="sub">${formatDate(a.date)}</div></div>
+      </div>
+      <div class="desc">${escapeHtml(a.desc)}</div>
+      <div class="card-actions">
+        <button class="btn btn-soft btn-sm" onclick="openActivityModal(${a.id})"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteActivity(${a.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function openActivityModal(id) {
+  editingType = 'activity'; editingId = id || null;
+  const a = id ? DB.activities.find(x => x.id === id) : { title:'', date:'', desc:'', icon:'fa-star' };
+  document.getElementById('modalTitle').textContent = id ? 'Edit Activity' : 'Add Activity';
+  document.getElementById('modalSub').textContent = 'Activity details';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Title <span class="req">*</span></label><input type="text" id="aTitle" value="${escapeHtml(a.title)}"></div>
+    <div class="form-group"><label>Date</label><input type="date" id="aDate" value="${a.date || ''}"></div>
+    <div class="form-group"><label>Description</label><textarea id="aDesc">${escapeHtml(a.desc)}</textarea></div>
+    <div class="form-group"><label>Icon Class</label><input type="text" id="aIcon" value="${escapeHtml(a.icon || 'fa-star')}"></div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveActivity()"><i class="fas fa-save"></i> Save</button>
+  `;
+  openModal();
+}
+function saveActivity() {
+  const title = val('aTitle');
+  if (!title) { toast('Title required', 'error'); return; }
+  const data = { title, date: val('aDate'), desc: val('aDesc'), icon: val('aIcon') || 'fa-star' };
+  if (editingId) {
+    const idx = DB.activities.findIndex(x => x.id === editingId);
+    DB.activities[idx] = { ...DB.activities[idx], ...data };
+    toast('Activity updated', 'success');
+  } else {
+    DB.activities.push({ id: Date.now(), ...data });
+    toast('Activity added', 'success');
+  }
+  saveData(); closeModal(); renderActivities();
+}
+function deleteActivity(id) {
+  if (!confirm('Delete this activity?')) return;
+  DB.activities = DB.activities.filter(x => x.id !== id);
+  saveData(); renderActivities(); toast('Activity deleted', 'success');
+}
+
+/* ================================================================
+   GALLERY
+   ================================================================ */
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  const filterEl = document.getElementById('galleryFilter');
+  // rebuild filter
+  const currentFilter = filterEl.value;
+  filterEl.innerHTML = `<option value="">All Categories</option>` +
+    DB.galleryCategories.map(c => `<option value="${escapeHtml(c)}" ${c === currentFilter ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
+  const filtered = currentFilter ? DB.gallery.filter(g => g.category === currentFilter) : DB.gallery;
+  document.getElementById('galleryCount').textContent = DB.gallery.length;
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-images"></i><h4>No images</h4><p>Add images to display here.</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(g => `
+    <div class="gallery-item">
+      <i class="fas ${g.icon || 'fa-image'}"></i>
+      <div class="overlay">
+        <div class="title">${escapeHtml(g.title)}<br><small style="opacity:.8">${escapeHtml(g.category)}</small></div>
+      </div>
+      <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px">
+        <button class="btn-icon" style="background:rgba(255,255,255,.9);width:30px;height:30px" onclick="event.stopPropagation();openGalleryModal(${g.id})"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon danger" style="background:rgba(255,255,255,.9);width:30px;height:30px" onclick="event.stopPropagation();deleteGallery(${g.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function openGalleryModal(id) {
+  editingType = 'gallery'; editingId = id || null;
+  const g = id ? DB.gallery.find(x => x.id === id) : { title:'', category: DB.galleryCategories[0], icon:'fa-image' };
+  document.getElementById('modalTitle').textContent = id ? 'Edit Gallery Image' : 'Add Gallery Image';
+  document.getElementById('modalSub').textContent = 'Image details and category';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Title <span class="req">*</span></label><input type="text" id="gTitle" value="${escapeHtml(g.title)}"></div>
+    <div class="form-group"><label>Category</label>
+      <select id="gCategory">
+        ${DB.galleryCategories.map(c => `<option value="${escapeHtml(c)}" ${c === g.category ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label>Icon (placeholder preview)</label><input type="text" id="gIcon" value="${escapeHtml(g.icon || 'fa-image')}"><div class="hint">Upload actual images in production.</div></div>
+    <div class="form-group"><label>Add New Category</label><input type="text" id="gNewCat" placeholder="New category name"><button type="button" class="btn btn-soft btn-sm" style="margin-top:6px" onclick="addGalleryCategory()"><i class="fas fa-plus"></i> Add Category</button></div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveGallery()"><i class="fas fa-save"></i> Save</button>
+  `;
+  openModal();
+}
+function addGalleryCategory() {
+  const name = val('gNewCat');
+  if (!name) { toast('Enter category name', 'error'); return; }
+  if (DB.galleryCategories.includes(name)) { toast('Category exists', 'error'); return; }
+  DB.galleryCategories.push(name);
+  saveData();
+  const sel = document.getElementById('gCategory');
+  const opt = document.createElement('option');
+  opt.value = name; opt.textContent = name; opt.selected = true;
+  sel.appendChild(opt);
+  document.getElementById('gNewCat').value = '';
+  toast('Category added', 'success');
+}
+function saveGallery() {
+  const title = val('gTitle');
+  if (!title) { toast('Title required', 'error'); return; }
+  const data = { title, category: val('gCategory'), icon: val('gIcon') || 'fa-image' };
+  if (editingId) {
+    const idx = DB.gallery.findIndex(x => x.id === editingId);
+    DB.gallery[idx] = { ...DB.gallery[idx], ...data };
+    toast('Image updated', 'success');
+  } else {
+    DB.gallery.push({ id: Date.now(), ...data });
+    toast('Image added', 'success');
+  }
+  saveData(); closeModal(); renderGallery();
+}
+function deleteGallery(id) {
+  if (!confirm('Delete this image?')) return;
+  DB.gallery = DB.gallery.filter(x => x.id !== id);
+  saveData(); renderGallery(); toast('Image deleted', 'success');
+}
+
+/* ================================================================
+   NEWS
+   ================================================================ */
+function renderNews() {
+  const tbody = document.getElementById('newsBody');
+  document.getElementById('newsCount').textContent = DB.news.length;
+  if (!DB.news.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="empty"><i class="fas fa-newspaper"></i><h4>No news</h4><p>Click "Add News" to create one.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = DB.news.map(n => `
+    <tr>
+      <td><b>${escapeHtml(n.title)}</b><br><small style="color:var(--muted);font-weight:400">${escapeHtml(n.desc || '')}</small></td>
+      <td>${formatDate(n.date)}</td>
+      <td>${statusBadge(n.status)}</td>
+      <td class="actions">
+        <button class="btn-icon success" onclick="toggleNewsStatus(${n.id})" title="Toggle status"><i class="fas fa-sync-alt"></i></button>
+        <button class="btn-icon" onclick="openNewsModal(${n.id})" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon danger" onclick="deleteNews(${n.id})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+function openNewsModal(id) {
+  editingType = 'news'; editingId = id || null;
+  const n = id ? DB.news.find(x => x.id === id) : { title:'', date: new Date().toISOString().slice(0,10), status:'Draft', desc:'' };
+  document.getElementById('modalTitle').textContent = id ? 'Edit News' : 'Add News';
+  document.getElementById('modalSub').textContent = 'News / notice details';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Title <span class="req">*</span></label><input type="text" id="nTitle" value="${escapeHtml(n.title)}"></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="nDate" value="${n.date || ''}"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="nStatus">
+          <option value="Draft" ${n.status==='Draft'?'selected':''}>Draft</option>
+          <option value="Published" ${n.status==='Published'?'selected':''}>Published</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Short Description</label><textarea id="nDesc">${escapeHtml(n.desc)}</textarea></div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveNews()"><i class="fas fa-save"></i> Save</button>
+  `;
+  openModal();
+}
+function saveNews() {
+  const title = val('nTitle');
+  if (!title) { toast('Title required', 'error'); return; }
+  const data = { title, date: val('nDate'), status: val('nStatus'), desc: val('nDesc') };
+  if (editingId) {
+    const idx = DB.news.findIndex(x => x.id === editingId);
+    DB.news[idx] = { ...DB.news[idx], ...data };
+    toast('News updated', 'success');
+  } else {
+    DB.news.unshift({ id: Date.now(), ...data });
+    toast('News added', 'success');
+  }
+  saveData(); closeModal(); renderNews(); renderDashboard();
+}
+function deleteNews(id) {
+  if (!confirm('Delete this news item?')) return;
+  DB.news = DB.news.filter(x => x.id !== id);
+  saveData(); renderNews(); renderDashboard(); toast('News deleted', 'success');
+}
+function toggleNewsStatus(id) {
+  const n = DB.news.find(x => x.id === id);
+  if (!n) return;
+  n.status = n.status === 'Published' ? 'Draft' : 'Published';
+  saveData(); renderNews(); renderDashboard();
+  toast(`Status changed to ${n.status}`, 'success');
+}
+
+/* ================================================================
+   EVENTS
+   ================================================================ */
+function renderEvents() {
+  const grid = document.getElementById('eventGrid');
+  document.getElementById('eventCount').textContent = DB.events.length;
+  if (!DB.events.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-calendar-alt"></i><h4>No events</h4><p>Click "Add Event" to create one.</p></div>`;
+    return;
+  }
+  grid.innerHTML = DB.events.map(ev => `
+    <div class="info-card">
+      <div class="card-top">
+        <div class="avatar gold"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <h4>${escapeHtml(ev.title)}</h4>
+          <div class="sub">${formatDate(ev.date)} · ${escapeHtml(ev.time || '')}</div>
+        </div>
+      </div>
+      <div class="desc">${escapeHtml(ev.desc)}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(ev.location || '—')}</div>
+      <div style="margin-bottom:10px">${ev.status === 'Published' ? '<span class="badge green"><span class="dot"></span> Published</span>' : '<span class="badge gold"><span class="dot draft"></span> Draft</span>'}</div>
+      <div class="card-actions">
+        <button class="btn btn-soft btn-sm" onclick="openEventModal(${ev.id})"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteEvent(${ev.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function openEventModal(id) {
+  editingType = 'event'; editingId = id || null;
+  const ev = id ? DB.events.find(x => x.id === id) : { title:'', date:'', time:'', location:'', desc:'', status:'Published' };
+  document.getElementById('modalTitle').textContent = id ? 'Edit Event' : 'Add Event';
+  document.getElementById('modalSub').textContent = 'Event details';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Title <span class="req">*</span></label><input type="text" id="eTitle" value="${escapeHtml(ev.title)}"></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="eDate" value="${ev.date || ''}"></div>
+      <div class="form-group"><label>Time</label><input type="time" id="eTime" value="${ev.time || ''}"></div>
+    </div>
+    <div class="form-group"><label>Location</label><input type="text" id="eLocation" value="${escapeHtml(ev.location || '')}"></div>
+    <div class="form-group"><label>Description</label><textarea id="eDesc">${escapeHtml(ev.desc)}</textarea></div>
+    <div class="form-group"><label>Status</label>
+      <select id="eStatus">
+        <option value="Published" ${ev.status==='Published'?'selected':''}>Published</option>
+        <option value="Draft" ${ev.status==='Draft'?'selected':''}>Draft</option>
+      </select>
+    </div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveEvent()"><i class="fas fa-save"></i> Save</button>
+  `;
+  openModal();
+}
+function saveEvent() {
+  const title = val('eTitle');
+  if (!title) { toast('Title required', 'error'); return; }
+  const data = {
+    title, date: val('eDate'), time: val('eTime'),
+    location: val('eLocation'), desc: val('eDesc'), status: val('eStatus')
+  };
+  if (editingId) {
+    const idx = DB.events.findIndex(x => x.id === editingId);
+    DB.events[idx] = { ...DB.events[idx], ...data };
+    toast('Event updated', 'success');
+  } else {
+    DB.events.push({ id: Date.now(), ...data });
+    toast('Event added', 'success');
+  }
+  saveData(); closeModal(); renderEvents(); renderDashboard();
+}
+function deleteEvent(id) {
+  if (!confirm('Delete this event?')) return;
+  DB.events = DB.events.filter(x => x.id !== id);
+  saveData(); renderEvents(); renderDashboard(); toast('Event deleted', 'success');
+}
+
+/* ================================================================
+   ADMISSIONS
+   ================================================================ */
+function renderAdmissions() {
+  const info = DB.admissionInfo || {};
+  document.getElementById('admInfo').value = info.info || '';
+  document.getElementById('admClasses').value = info.classes || '';
+  document.getElementById('admEligibility').value = info.eligibility || '';
+  document.getElementById('admDocs').value = info.docs || '';
+
+  const tbody = document.getElementById('admissionBody');
+  document.getElementById('admissionCount').textContent = DB.admissions.length;
+  if (!DB.admissions.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty"><i class="fas fa-user-graduate"></i><h4>No enquiries</h4><p>Admission enquiries will appear here.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = DB.admissions.map(a => `
+    <tr>
+      <td><b>${escapeHtml(a.student)}</b></td>
+      <td>${escapeHtml(a.parent)}</td>
+      <td>${escapeHtml(a.cls)}</td>
+      <td>${escapeHtml(a.phone)}</td>
+      <td>${escapeHtml(a.email || '—')}</td>
+      <td>${a.status === 'New' ? '<span class="badge gold">New</span>' : '<span class="badge green">Read</span>'}</td>
+      <td class="actions">
+        <button class="btn-icon" onclick="viewAdmission(${a.id})" title="View"><i class="fas fa-eye"></i></button>
+        <button class="btn-icon success" onclick="markAdmissionRead(${a.id})" title="Mark read"><i class="fas fa-check"></i></button>
+        <button class="btn-icon danger" onclick="deleteAdmission(${a.id})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+function saveAdmissionInfo() {
+  DB.admissionInfo = {
+    info: val('admInfo'), classes: val('admClasses'),
+    eligibility: val('admEligibility'), docs: val('admDocs')
+  };
+  saveData(); toast('Admission info saved', 'success');
+}
+function viewAdmission(id) {
+  const a = DB.admissions.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('modalTitle').textContent = 'Admission Enquiry';
+  document.getElementById('modalSub').textContent = a.student;
+  document.getElementById('modalBody').innerHTML = `
+    <div style="display:grid;gap:12px">
+      <div><b>Student:</b> ${escapeHtml(a.student)}</div>
+      <div><b>Parent:</b> ${escapeHtml(a.parent)}</div>
+      <div><b>Class:</b> ${escapeHtml(a.cls)}</div>
+      <div><b>Phone:</b> ${escapeHtml(a.phone)}</div>
+      <div><b>Email:</b> ${escapeHtml(a.email || '—')}</div>
+      <div><b>Date:</b> ${formatDate(a.date)}</div>
+      <div><b>Status:</b> ${escapeHtml(a.status)}</div>
+      <div><b>Message:</b><br><span style="color:var(--muted)">${escapeHtml(a.message || '—')}</span></div>
+    </div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    <button class="btn btn-gold" onclick="markAdmissionRead(${a.id});closeModal()"><i class="fas fa-check"></i> Mark Read</button>
+  `;
+  openModal();
+}
+function markAdmissionRead(id) {
+  const a = DB.admissions.find(x => x.id === id);
+  if (a) { a.status = 'Read'; saveData(); renderAdmissions(); renderDashboard(); toast('Marked as read', 'success'); }
+}
+function deleteAdmission(id) {
+  if (!confirm('Delete this enquiry?')) return;
+  DB.admissions = DB.admissions.filter(x => x.id !== id);
+  saveData(); renderAdmissions(); renderDashboard(); toast('Enquiry deleted', 'success');
+}
+
+/* ================================================================
+   MESSAGES
+   ================================================================ */
+function renderMessages() {
+  const tbody = document.getElementById('messageBody');
+  document.getElementById('messageCount').textContent = DB.messages.length;
+  if (!DB.messages.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty"><i class="fas fa-envelope"></i><h4>No messages</h4><p>Contact form submissions will appear here.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = DB.messages.map(m => `
+    <tr>
+      <td><b>${escapeHtml(m.name)}</b></td>
+      <td>${escapeHtml(m.subject)}</td>
+      <td>${formatDate(m.date)}</td>
+      <td>${m.status === 'Unread' ? '<span class="badge gold">Unread</span>' : '<span class="badge green">Read</span>'}</td>
+      <td class="actions">
+        <button class="btn-icon" onclick="viewMessage(${m.id})" title="View"><i class="fas fa-eye"></i></button>
+        <button class="btn-icon success" onclick="markMessageRead(${m.id})" title="Mark read"><i class="fas fa-check"></i></button>
+        <button class="btn-icon danger" onclick="deleteMessage(${m.id})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+function viewMessage(id) {
+  const m = DB.messages.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('modalTitle').textContent = 'Contact Message';
+  document.getElementById('modalSub').textContent = m.subject;
+  document.getElementById('modalBody').innerHTML = `
+    <div style="display:grid;gap:12px">
+      <div><b>Name:</b> ${escapeHtml(m.name)}</div>
+      <div><b>Email:</b> ${escapeHtml(m.email || '—')}</div>
+      <div><b>Phone:</b> ${escapeHtml(m.phone || '—')}</div>
+      <div><b>Date:</b> ${formatDate(m.date)}</div>
+      <div><b>Subject:</b> ${escapeHtml(m.subject)}</div>
+      <div><b>Message:</b><br><span style="color:var(--muted)">${escapeHtml(m.message)}</span></div>
+    </div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    <button class="btn btn-gold" onclick="markMessageRead(${m.id});closeModal()"><i class="fas fa-check"></i> Mark Read</button>
+  `;
+  openModal();
+}
+function markMessageRead(id) {
+  const m = DB.messages.find(x => x.id === id);
+  if (m) { m.status = 'Read'; saveData(); renderMessages(); renderDashboard(); toast('Marked as read', 'success'); }
+}
+function deleteMessage(id) {
+  if (!confirm('Delete this message?')) return;
+  DB.messages = DB.messages.filter(x => x.id !== id);
+  saveData(); renderMessages(); renderDashboard(); toast('Message deleted', 'success');
+}
+
+/* ================================================================
+   FAQS
+   ================================================================ */
+function renderFaqs() {
+  const list = document.getElementById('faqList');
+  document.getElementById('faqCount').textContent = DB.faqs.length;
+  if (!DB.faqs.length) {
+    list.innerHTML = `<div class="empty"><i class="fas fa-question-circle"></i><h4>No FAQs</h4><p>Click "Add FAQ" to create one.</p></div>`;
+    return;
+  }
+  list.innerHTML = DB.faqs.map(f => `
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">
+        <span>${escapeHtml(f.q)}</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-a">${escapeHtml(f.a)}</div>
+      <div style="padding:0 20px 16px;display:flex;gap:6px" onclick="event.stopPropagation()">
+        <button class="btn btn-soft btn-sm" onclick="openFaqModal(${f.id})"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteFaq(${f.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function openFaqModal(id) {
+  editingType = 'faq'; editingId = id || null;
+  const f = id ? DB.faqs.find(x => x.id === id) : { q:'', a:'' };
+  document.getElementById('modalTitle').textContent = id ? 'Edit FAQ' : 'Add FAQ';
+  document.getElementById('modalSub').textContent = 'Question and answer';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Question <span class="req">*</span></label><input type="text" id="fqQ" value="${escapeHtml(f.q)}"></div>
+    <div class="form-group"><label>Answer <span class="req">*</span></label><textarea id="fqA">${escapeHtml(f.a)}</textarea></div>
+  `;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="saveFaq()"><i class="fas fa-save"></i> Save</button>
+  `;
+  openModal();
+}
+function saveFaq() {
+  const q = val('fqQ'), a = val('fqA');
+  if (!q || !a) { toast('Question and answer required', 'error'); return; }
+  const data = { q, a };
+  if (editingId) {
+    const idx = DB.faqs.findIndex(x => x.id === editingId);
+    DB.faqs[idx] = { ...DB.faqs[idx], ...data };
+    toast('FAQ updated', 'success');
+  } else {
+    DB.faqs.push({ id: Date.now(), ...data });
+    toast('FAQ added', 'success');
+  }
+  saveData(); closeModal(); renderFaqs();
+}
+function deleteFaq(id) {
+  if (!confirm('Delete this FAQ?')) return;
+  DB.faqs = DB.faqs.filter(x => x.id !== id);
+  saveData(); renderFaqs(); toast('FAQ deleted', 'success');
+}
+
+/* ================================================================
+   MODAL
+   ================================================================ */
+function openModal() { document.getElementById('modalOverlay').classList.add('show'); }
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  editingId = null; editingType = null;
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ================================================================
+   IMPORT / EXPORT
+   ================================================================ */
+function exportData() {
+  const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gurukul-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded', 'success');
+}
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      DB = { ...structuredClone(DEFAULTS), ...data };
+      saveData(); refreshAll();
+      toast('Data imported successfully', 'success');
+    } catch(err) {
+      toast('Invalid backup file', 'error');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* ================================================================
+   GLOBAL SEARCH (simple)
+   ================================================================ */
+document.getElementById('globalSearch').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) return;
+  const results = [];
+  DB.news.forEach(n => { if (n.title.toLowerCase().includes(q)) results.push({ label: 'News', text: n.title, page: 'news' }); });
+  DB.events.forEach(ev => { if (ev.title.toLowerCase().includes(q)) results.push({ label: 'Event', text: ev.title, page: 'events' }); });
+  DB.team.forEach(m => { if (m.name.toLowerCase().includes(q)) results.push({ label: 'Team', text: m.name, page: 'team' }); });
+  DB.faqs.forEach(f => { if (f.q.toLowerCase().includes(q)) results.push({ label: 'FAQ', text: f.q, page: 'faqs' }); });
+  if (!results.length) { toast('No results for "' + q + '"', 'info'); return; }
+  const r = results[0];
+  navTo(r.page);
+  toast(`Found ${results.length} result(s) — showing ${r.label}`, 'info');
+  e.target.value = '';
+});
+
+/* ================================================================
+   INIT
+   ================================================================ */
+renderDashboard();
+checkSession().catch(function(err) { console.error(err); toast('Supabase connection failed: ' + err.message, 'error'); });
+subscribeRealtime();
+</script>
+</body>
+</html>
